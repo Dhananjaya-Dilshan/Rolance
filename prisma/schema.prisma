@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  fulfilled
+  shipped
+  awaiting_shipment
+  awaiting_approvel
+  rejected
+  pending_payment
+}
+
+enum PhoneModel {
+  iphonex
+  iphone11
+  iphone12
+  iphone13
+  honorx7b
+  SamsungS24Ultra
+}
+
+enum CaseMaterial {
+  silicone
+  polycarbonate
+}
+
+enum CaseFinish {
+  smooth
+  textured
+}
+
+enum CaseColor {
+  black
+  blue
+  rose
+}
+
+model Configuration {
+  id              String        @id @default(cuid())
+  width           Int
+  height          Int
+  imageUrl        String
+  color           String?
+  model           PhoneModel?
+  material        CaseMaterial?
+  finish          CaseFinish?
+  croppedImageUrl String?
+ productType     String        @default("phone_case")  
+  Order           Order[]
+  designs         Design[]
+}
+
+
+
+model Order {
+  id              String        @id @default(cuid())
+  configurationId String
+  configuration   Configuration @relation(fields: [configurationId], references: [id])
+  customer        customers     @relation(fields: [customerId], references: [id])
+  customerId      String
+  shopId          String
+  shop            shop          @relation(fields: [shopId], references: [id])
+  amount          Float
+  isPaid          Boolean       @default(false)
+  status          OrderStatus   @default(awaiting_approvel)
+
+  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId String?
+  billingAddress    BillingAddress?  @relation(fields: [billingAddressId], references: [id])
+  billingAddressId  String?
+
+  createdAt DateTime @default(now())
+  updated   DateTime @updatedAt
+}
+
+model ShippingAddress {
+  id          String  @id @default(cuid())
+  name        String
+  street      String
+  city        String
+  postalCode  String
+  country     String
+  state       String?
+  phoneNumber String?
+  orders      Order[]
+}
+
+model BillingAddress {
+  id          String  @id @default(cuid())
+  name        String
+  street      String
+  city        String
+  postalCode  String
+  country     String
+  state       String?
+  phoneNumber String?
+  orders      Order[]
+}
+
+model customers {
+  id           String   @id @default(cuid())
+  username     String
+  email        String   @unique  // Added unique constraint
+  password     String
+  country      String
+  createdAt    DateTime @default(now())  
+  updatedAt    DateTime @updatedAt
+  shopRatings  ShopRating[] 
+  Order        Order[]
+  canvasDesigns CanvasDesign[]
+  designs      Design[]
+  resetToken     String?
+  resetTokenExpiry DateTime?
+  
+}
+
+model shop {
+  id             String   @id @default(cuid())
+  username       String
+  email          String   @unique  
+  password       String
+  country        String
+  ShopName       String
+  ShopAddress    String  
+  ContactNumber  String
+  image          String  @default("/default-image.jpeg")
+  rating         Float? 
+  createdAt      DateTime @default(now())  
+  updatedAt      DateTime @updatedAt 
+  ShopRatings    ShopRating[]
+  Order          Order[]
+  resetToken     String?
+  resetTokenExpiry DateTime?
+}
+
+model ShopRating {
+  id             String        @id @default(uuid())
+  shopId         String
+  customerId     String
+  rating         Float
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  shop           shop          @relation(fields: [shopId], references: [id])
+  customer       customers     @relation(fields: [customerId], references: [id])
+  @@unique([shopId, customerId])
+}
+
+model Design {
+  id              String   @id @default(cuid())
+  configurationId String
+  configuration   Configuration @relation(fields: [configurationId], references: [id])
+  customerId      String?       
+  customer        customers?    @relation(fields: [customerId], references: [id])
+  title           String
+  description     String
+  tags            String[]
+  commissionRate  Float
+  status          String   @default("pending") // pending, approved, rejected
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CanvasDesign {
+  id          String            @id @default(cuid())
+  customerId  String
+  customer    customers         @relation(fields: [customerId], references: [id])
+  title       String
+  elements    Json?
+  lines       Json?
+  images      Json?
+  metadata    Json?  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  shares      CanvasDesignShare[]
+}
+
+model CanvasDesignShare {
+  id          String       @id @default(cuid())
+  canvasId    String
+  canvas      CanvasDesign @relation(fields: [canvasId], references: [id])
+  email       String
+  permission  String       @default("edit")
+  token       String       @unique
+  createdAt   DateTime     @default(now())
+  expiresAt   DateTime?
+}
