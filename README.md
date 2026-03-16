@@ -3,7 +3,7 @@
 Rolance is a full-stack **Print-on-Demand (POD) marketplace platform** that connects customers with printing shops for customized products.  
 Customers can upload their designs, browse available products, and place print requests, while shop owners manage their products and orders through a dashboard.
 
-![Screenshot of the hero seaction of the site](https://github.com/DhananjayaDilshan/Rolance/blob/409d44664b8d0948da184ab3ce6609935478b227/0303(1).png)
+![Screenshot of the hero seaction of the site](https://github.com/Dhananjaya-Dilshan/Rolance/blob/f90b1de27e11f9a96bd5cd144fcc87cd9783231c/0303(1).png)
 ---
 
 ## 🚀 Features
