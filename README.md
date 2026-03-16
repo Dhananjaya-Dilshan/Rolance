@@ -1,7 +1,7 @@
 # Rolance – Print-on-Demand Marketplace
 
 Rolance is a full-stack **Print-on-Demand (POD) marketplace platform** that connects customers with printing shops for customized products.  
-Customers can upload their designs, browse available products, and place print requests, while shop owners manage their products and orders through a virtual storefront.
+Customers can upload their designs, browse available products, and place print requests, while shop owners manage their products and orders through a dashboard.
 
 ---
 
@@ -34,7 +34,6 @@ Customers can upload their designs, browse available products, and place print r
 
 ### Frontend
 - Next.js (App Router)
-- React
 - TypeScript
 - Tailwind CSS
 
